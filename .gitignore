@@ -289,7 +289,6 @@ BulkConfig/
 bin/
 obj/
 appsettings.json
-local.settings.json
 azure-functions-host.json
 
 # Azure Functions project template
