@@ -13,6 +13,11 @@ public class UserProfileService : IUserProfileService
         _userProfileRepository = userProfileRepository;
     }
 
+    public async Task<CM.UserProfile> GetUserProfileAsync(string id)
+    {
+        return await _userProfileRepository.GetUserProfileAsync(id);
+    }
+
     public async Task<CM.UserProfile> AddUserProfileAsync(CM.UserProfile userProfile)
     {
         return await _userProfileRepository.AddUserProfileAsync(userProfile);
