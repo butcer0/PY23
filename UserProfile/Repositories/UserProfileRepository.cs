@@ -2,8 +2,6 @@
 using PY23.UserProfile.Interfaces.Repositories;
 using Microsoft.Azure.Cosmos;
 using Microsoft.Extensions.Logging;
-using PY23.Common.Exceptions;
-using PY23.Common.Models;
 using System.Net;
 
 namespace PY23.UserProfile.Repositories;
@@ -19,21 +17,21 @@ public class UserProfileRepository : IUserProfileRepository
         _logger = logger;
     }
 
-    public async Task<CM.UserProfile> GetUserProfileAsync(string userId)
+    public async Task<CM.UserProfile> GetUserProfileAsync(string id)
     {
         try
         {
-            var response = await _container.ReadItemAsync<CM.UserProfile>(userId, new PartitionKey(userId));
+            var response = await _container.ReadItemAsync<CM.UserProfile>(id, new PartitionKey(id));
             return response.Resource;
         }
         catch (CosmosException ex) when (ex.StatusCode == HttpStatusCode.NotFound)
         {
-            _logger.LogInformation($"User profile not found for ID: {userId}. StatusCode: {ex.StatusCode}");
+            _logger.LogInformation($"User profile not found for ID: {id}. StatusCode: {ex.StatusCode}");
             return null;
         }
         catch (Exception ex)
         {
-            _logger.LogError(ex, $"An error occurred while retrieving user profile for ID: {userId}");
+            _logger.LogError(ex, $"An error occurred while retrieving user profile for ID: {id}");
             throw;
         }
     }

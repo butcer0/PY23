@@ -27,9 +27,8 @@ public class AddUserProfileFunction
         [HttpTrigger(AuthorizationLevel.Function, "post")] HttpRequestData req,
         FunctionContext executionContext)
     {
-        
-        var logger = executionContext.GetLogger("AddUserProfile");
-        logger.LogInformation($"Received a request to add a user profile with CorrelationId: {_correlationId}");
+
+        _logger.LogInformation($"Received a request to add a user profile with CorrelationId: {_correlationId}");
 
         var requestBody = await new StreamReader(req.Body).ReadToEndAsync();
         var userProfile = UserProfileHelper.CreateNewUserProfile(requestBody, _correlationId);
@@ -44,21 +43,21 @@ public class AddUserProfileFunction
         }
         catch (CosmosException ex)
         {
-            logger.LogError(ex, $"Cosmos DB error occurred while adding the user profile: {ex.Message}, CorrelationId: {_correlationId}");
+            _logger.LogError(ex, $"Cosmos DB error occurred while adding the user profile: {ex.Message}, CorrelationId: {_correlationId}");
             var errorResponse = req.CreateResponse(ex.StatusCode);
             await errorResponse.WriteAsJsonAsync(new { Message = ex.Message, CorrelationId = _correlationId });
             return errorResponse;
         }
         catch (ApiException ex)
         {
-            logger.LogError($"An API error occurred while adding the user profile: {ex.Message}, CorrelationId: {_correlationId}");
+            _logger.LogError($"An API error occurred while adding the user profile: {ex.Message}, CorrelationId: {_correlationId}");
             var errorResponse = req.CreateResponse(ex.StatusCode);
             await errorResponse.WriteAsJsonAsync(new { Message = ex.Message, CorrelationId = _correlationId });
             return errorResponse;
         }
         catch (Exception ex)
         {
-            logger.LogError($"An error occurred while adding the user profile: {ex.Message}, CorrelationId: {_correlationId}");
+            _logger.LogError($"An error occurred while adding the user profile: {ex.Message}, CorrelationId: {_correlationId}");
             var errorResponse = req.CreateResponse(HttpStatusCode.InternalServerError);
             await errorResponse.WriteAsJsonAsync(new { Message = "An internal error occurred.", CorrelationId = _correlationId });
             return errorResponse;
